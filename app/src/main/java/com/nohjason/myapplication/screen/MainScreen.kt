@@ -1,6 +1,7 @@
 package com.nohjason.myapplication.screen
 
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,14 +9,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.Add
@@ -37,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -64,37 +72,66 @@ fun MainScreen(
                     .padding(vertical = 10.dp, horizontal = 20.dp)
             ) {
                 items(tasks) { task ->
-                    Card(
-                        task,
-                        task.colorEnum,
-                        deleteOnClick = {
-                            viewModel.deleteTask(task.id!!)
-                            viewModel.fetchTasks()
-                        },
-                        updateOnClick = {
-                            navController.navigate(Screen.Update.name + "/${task.id!!}/${task.name}")
-                        },
-                        stateOnClick = {
-                            task.id?.let {
-                                viewModel.updateRoutine(
-                                    it, Task(task.name, task.importanceEnum, task.colorEnum)
+                    var check by remember { mutableStateOf(if (task.state == "active") false else true) }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable {
+                                    task.id?.let {
+                                        viewModel.updateRoutine(
+                                            it,
+                                            Task(task.name, task.importanceEnum, task.colorEnum)
+                                        )
+                                        check = !check
+                                    }
+                                }
+                                .background(
+                                    color =
+                                    if (check) getColorFromEnum(task.colorEnum) else Color.White
                                 )
-                            }
+                                .border(
+                                    3.dp,
+                                    color = if (check) Color.Transparent else getColorFromEnum(task.colorEnum),
+                                    shape = CircleShape
+                                )
+                                .padding(5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "check",
+                                tint = Color.White
+                            )
                         }
-                    )
-                    Divider()
+
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Card(
+                            task,
+                            check,
+                            deleteOnClick = {
+                                viewModel.deleteTask(task.id!!)
+                                viewModel.fetchTasks()
+                            },
+                            updateOnClick = {
+                                navController.navigate(Screen.Update.name + "/${task.id!!}/${task.name}")
+                            },
+                        )
+                    }
                 }
             }
             FloatingActionButton(
                 onClick = {
-                    // 클릭 시 실행할 코드
                     navController.navigate(Screen.Add.name)
                 },
                 containerColor = Color.Gray,
                 shape = MaterialTheme.shapes.small.copy(CornerSize(10.dp)),
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp), // 오른쪽 하단에서 16dp 패딩
+                    .padding(16.dp),
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -109,54 +146,67 @@ fun MainScreen(
 @Composable
 fun Card(
     task: Task,
-    color: String,
+    check: Boolean,
     deleteOnClick: () -> Unit,
     updateOnClick: () -> Unit,
-    stateOnClick: () -> Unit
-//    viewModel: MainViewModel
 ) {
-    var check by remember { mutableStateOf(if (task.state == "active") false else true) }
-
     Box(
         modifier = Modifier
-            .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(
-                color =
-                if (color == "green") Color(0xFFCEEDC7)
-                else if (color == "red") Color(0xFFFF9494)
-                else if (color == "orange") Color(0xFFFFD4B2)
-                else if (color == "yellow") Color(0xFFFFF6BD)
-                else if (color == "blue") Color(0xFFD7E3FC)
-                else Color(0xFFFFC8DD)
+                color = getColorFromEnum(task.colorEnum)
             )
-            .padding(10.dp)
+            .padding(15.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Checkbox(
-                checked = check,
-                onCheckedChange = {
-                    check = !check
-                    stateOnClick()
-                    Log.d("TAG", "Card: ${task.state}")
-                }
+            Text(
+                text = task.name,
+                textDecoration = if (check) TextDecoration.LineThrough else null,
+                fontWeight = FontWeight.Bold
             )
-            Text(text = task.name)
             Spacer(modifier = Modifier.weight(0.1f))
-            IconButton(onClick = { updateOnClick() }) {
-                Icon(
-                    imageVector = Icons.Default.Create,
-                    contentDescription = "update"
-                )
-            }
-            IconButton(onClick = { deleteOnClick() }) {
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = "delete"
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Create,
+                contentDescription = "update",
+                modifier = Modifier.clickable { updateOnClick() }
+            )
+            Icon(
+                imageVector = Icons.Default.Clear,
+                contentDescription = "delete",
+                modifier = Modifier.clickable { deleteOnClick() }
+            )
         }
+    }
+}
+
+@Composable
+fun getColorFromEnum(color: String): Color {
+    return when (color) {
+        "green" -> Color(0xFFCEEDC7)
+        "red" -> Color(0xFFFF9494)
+        "orange" -> Color(0xFFFFD4B2)
+        "yellow" -> Color(0xFFFFF6BD)
+        "blue" -> Color(0xFFD7E3FC)
+        else -> Color(0xFFFFC8DD)
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun WhatText() {
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(Color.Blue)
+            .padding(10.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Check,
+            contentDescription = "check",
+            modifier = Modifier.size(30.dp)
+        )
     }
 }
