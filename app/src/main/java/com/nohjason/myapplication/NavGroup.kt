@@ -1,17 +1,18 @@
 package com.nohjason.myapplication
 
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nohjason.myapplication.network.MainViewModel
-import com.nohjason.myapplication.screen.AddScreen
+import com.nohjason.myapplication.screen.RoutineAddScreen
 import com.nohjason.myapplication.screen.MainScreen
+import com.nohjason.myapplication.screen.UpdateScreen
 
 enum class Screen() {
     Main,
     Add,
+    Update
 }
 
 @Composable
@@ -26,7 +27,17 @@ fun NavGroup(viewModel: MainViewModel){
             MainScreen(navController, viewModel)
         }
         composable(route = Screen.Add.name) {
-            AddScreen(navController, viewModel)
+            RoutineAddScreen(navController, viewModel)
+        }
+        composable(route = Screen.Update.name+"/{id}/{name}") { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("id")
+            val name = backStackEntry.arguments?.getString("name")
+            UpdateScreen(
+                taskId = (taskId?:0).toString(),
+                name?:"",
+                navController,
+                viewModel
+            )
         }
     }
 }

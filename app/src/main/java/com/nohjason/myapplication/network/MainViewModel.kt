@@ -42,18 +42,50 @@ class MainViewModel : ViewModel() {
     }
 
     fun deleteTask(id: Int) {
-        Log.d("TAG", "deleteTask: $id")
         viewModelScope.launch {
             try {
                 val response: Response<Void> = RetrofitInstance.api.deleteTask(id)
                 if (response.isSuccessful) {
                     Log.d("MainViewModel", "Task deleted successfully: $id")
-                    // 여기에서 필요한 추가 작업을 수행합니다. 예: 리스트 갱신
+                    // 태스크 삭제 후 목록을 다시 가져옴
+                    fetchTasks()
                 } else {
                     Log.e("MainViewModel", "Error deleting task: ${response.code()} ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("MainViewModel", "Exception deleting task", e)
+            }
+        }
+    }
+
+    fun updateTask(id: Int, task: Task) {
+        viewModelScope.launch {
+            try {
+                val response: Response<Task> = RetrofitInstance.api.updateTask(id, task)
+                if (response.isSuccessful) {
+                    Log.d("MainViewModel", "Task updated successfully: $id")
+                    fetchTasks() // 업데이트 후 목록을 다시 불러옵니다.
+                } else {
+                    Log.e("MainViewModel", "Error updating task: ${response.code()} ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Exception updating task", e)
+            }
+        }
+    }
+
+    fun updateRoutine(id: Int, task: Task) {
+        viewModelScope.launch {
+            try {
+                val response: Response<Task> = RetrofitInstance.api.updateSet(id, task)
+                if (response.isSuccessful) {
+                    Log.d("MainViewModel", "Routine updated successfully: $id")
+                    fetchTasks() // 업데이트 후 목록을 다시 불러옵니다.
+                } else {
+                    Log.e("MainViewModel", "Error updating routine: ${response.code()} ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Exception updating routine", e)
             }
         }
     }

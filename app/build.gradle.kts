@@ -50,6 +50,12 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.compose.material:material:1.6.8")
+    // Needed to get a view model reference in Jetpack Compose
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.30.1")
+
+
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.google.code.gson:gson:2.10.1")

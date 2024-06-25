@@ -7,6 +7,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -19,4 +20,16 @@ interface ApiService {
 
     @DELETE("routine/{id}")
     suspend fun deleteTask(@Path("id") id: Int): Response<Void>
+
+    @PATCH("routine/{id}")
+    suspend fun updateTask(
+        @Path("id") id: Int,
+        @Body task: Task
+    ): Response<Task>
+
+    @PATCH("routine/set/{id}")
+    suspend fun updateSet(
+        @Path("id") id: Int,
+        @Body task: Task
+    ): Response<Task>
 }

@@ -1,6 +1,7 @@
 package com.nohjason.myapplication.screen
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,12 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,27 +37,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import com.nohjason.myapplication.network.MainViewModel
 import com.nohjason.myapplication.network.Task
 import kotlin.collections.listOf
-import kotlin.collections.listOf as listOf1
 
 @Composable
-fun AddScreen(
+fun RoutineAddScreen(
     navController: NavHostController,
     viewModel: MainViewModel,
 ) {
+    val context = LocalContext.current
     var text by remember { mutableStateOf("") }
-    var startDate by remember { mutableStateOf("") }
-    var endDate by remember { mutableStateOf("") }
+//    var startDate by remember { mutableStateOf("") }
+//    var endDate by remember { mutableStateOf("") }
     var importance by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.padding(vertical = 20.dp, horizontal = 60.dp),
     ) {
         Text(
-            text = "Task",
+            text = "Routine",
             fontSize = 40.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -71,11 +68,11 @@ fun AddScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "Start Date")
-        startDate = Date()
-
-        Text(text = "End Date")
-        endDate = Date()
+//        Text(text = "Start Date")
+//        startDate = Date()
+//
+//        Text(text = "End Date")
+//        endDate = Date()
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -115,7 +112,7 @@ fun AddScreen(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFF9C89B8))
                 .clickable {
-                    if (text.isNotEmpty() && importance.isNotEmpty() && startDate != "yyyy-mm-dd" && endDate != "yyyy-mm-dd" && selectedBoxIndex != -1) {
+                    if (text.isNotEmpty() && importance.isNotEmpty()  && selectedBoxIndex != -1) {
                         val task = Task(
                             name = text,
                             importanceEnum = importance,
@@ -126,6 +123,8 @@ fun AddScreen(
                         Log.d("TAG", "AddScreen: $task")
                         viewModel.createTask(task)
                         navController.popBackStack()
+                    } else {
+                        Toast.makeText(context, "모든 항목을 채워 주세요", Toast.LENGTH_SHORT).show()
                     }
                 }
         ) {

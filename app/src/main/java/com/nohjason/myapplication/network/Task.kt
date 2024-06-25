@@ -4,7 +4,8 @@ data class Task(
     val name: String,
     val importanceEnum: String,
     val colorEnum: String,
-    val id: Int? = null
+    val id: Int? = null,
+    val state: String? = null
 //    val startAt: String,
 //    val endAt: String
 )
