@@ -67,9 +67,8 @@ class DateUtils {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun dateToString(date: LocalDate): String {
-        val dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", Locale.getDefault())
-        val dateInMillis = convertMillisToLocalDateWithFormatter(date, dateFormatter)
-        return dateFormatter.format(dateInMillis)
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
+        return date.format(dateFormatter)
     }
 }
 
@@ -85,7 +84,7 @@ fun Date(
     }
     val dateToString = millisToLocalDate?.let {
         DateUtils().dateToString(millisToLocalDate)
-    } ?: "Choose Date"
+    } ?: "yyyy-mm-dd"
     var showDialog by remember { mutableStateOf(false) }
     Column(
         verticalArrangement = Arrangement.Center,

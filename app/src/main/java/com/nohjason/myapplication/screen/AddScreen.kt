@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -32,27 +33,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.gson.Gson
+import com.nohjason.myapplication.network.MainViewModel
+import com.nohjason.myapplication.network.Task
 import kotlin.collections.listOf
 import kotlin.collections.listOf as listOf1
 
 @Composable
 fun AddScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MainViewModel,
 ) {
-    var text by remember {
-        mutableStateOf("")
-    }
-    var date by remember {
-        mutableStateOf("")
-    }
-    var importance by remember {
-        mutableStateOf("")
-    }
+    var text by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
+    var importance by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier.padding(vertical = 20.dp, horizontal = 60.dp),
     ) {
@@ -69,8 +71,11 @@ fun AddScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "Date")
-        date = Date()
+        Text(text = "Start Date")
+        startDate = Date()
+
+        Text(text = "End Date")
+        endDate = Date()
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -94,12 +99,12 @@ fun AddScreen(
         }
 
         val colorList = listOf(
-            Color(0xFFCEEDC7),
-            Color(0xFFFF9494),
-            Color(0xFFFFD4B2),
-            Color(0xFFFFF6BD),
-            Color(0xFFD7E3FC),
-            Color(0xFFFFC8DD)
+            "green",
+            "red",
+            "orange",
+            "yellow",
+            "blue",
+            "pink"
         )
 
         Spacer(modifier = Modifier.weight(0.1f))
@@ -110,9 +115,16 @@ fun AddScreen(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFF9C89B8))
                 .clickable {
-                    if (text.isNotEmpty() && importance.isNotEmpty() && date != "Choose Date" && selectedBoxIndex != -1) {
-//                        Log.d("TAG", "AddScreen: $text, $importance, $date, $selectedBoxIndex")
-//                        Log.d("TAG", "AddScreen: ${colorList[selectedBoxIndex]}")
+                    if (text.isNotEmpty() && importance.isNotEmpty() && startDate != "yyyy-mm-dd" && endDate != "yyyy-mm-dd" && selectedBoxIndex != -1) {
+                        val task = Task(
+                            name = text,
+                            importanceEnum = importance,
+                            colorEnum = colorList[selectedBoxIndex]
+//                            startAt = startDate,
+//                            endAt = endDate
+                        )
+                        Log.d("TAG", "AddScreen: $task")
+                        viewModel.createTask(task)
                         navController.popBackStack()
                     }
                 }
@@ -178,9 +190,9 @@ fun DropdownButton(): String {
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("very important") },
+                text = { Text("veryImportant") },
                 onClick = {
-                    text = "very important"
+                    text = "veryImportant"
                     expanded = false
                 }
             )
