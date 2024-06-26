@@ -1,4 +1,4 @@
-package com.nohjason.myapplication.screen
+package com.nohjason.myapplication.screen.add
 
 import android.util.Log
 import android.widget.Toast
@@ -27,27 +27,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.nohjason.myapplication.network.MainViewModel
+import com.nohjason.myapplication.network.Routine
 import com.nohjason.myapplication.network.Task
-import kotlin.collections.listOf
+import com.nohjason.myapplication.screen.Date
 
 @Composable
-fun UpdateScreen(
-    taskId: String,
-    name: String,
-    navController: NavHostController,
+fun TaskAddScreen(
+    navController: NavController,
     viewModel: MainViewModel
 ) {
     val context = LocalContext.current
-    var text by remember { mutableStateOf(name) }
-//    var startDate by remember { mutableStateOf("") }
-//    var endDate by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
     var importance by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier.padding(vertical = 20.dp, horizontal = 60.dp),
     ) {
@@ -64,11 +60,8 @@ fun UpdateScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-//        Text(text = "Start Date")
-//        startDate = Date()
-//
-//        Text(text = "End Date")
-//        endDate = Date()
+        Text(text = "Date")
+        date = Date()
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -108,15 +101,17 @@ fun UpdateScreen(
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFF9C89B8))
                 .clickable {
-                    if (text.isNotEmpty() && importance.isNotEmpty() && selectedBoxIndex != -1) {
+                    if (text.isNotEmpty() && importance.isNotEmpty()  && selectedBoxIndex != -1 && date != "yyyy-mm-dd") {
                         val task = Task(
                             name = text,
                             importanceEnum = importance,
-                            colorEnum = colorList[selectedBoxIndex]
-//                            startAt = startDate,
+                            colorEnum = colorList[selectedBoxIndex],
+                            date = date
 //                            endAt = endDate
                         )
-                        viewModel.updateTask(taskId.toInt(), task)
+                        Log.d("TAG", "AddScreen: $task")
+                        viewModel.createTask(task)
+                        navController.popBackStack()
                         navController.popBackStack()
                     } else {
                         Toast.makeText(context, "모든 항목을 채워 주세요", Toast.LENGTH_SHORT).show()
@@ -124,7 +119,7 @@ fun UpdateScreen(
                 }
         ) {
             Text(
-                text = "Update",
+                text = "Add",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -135,9 +130,3 @@ fun UpdateScreen(
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun PreviewUpdateCompose() {
-//    UpdateScreen(taskId = "3")
-//}

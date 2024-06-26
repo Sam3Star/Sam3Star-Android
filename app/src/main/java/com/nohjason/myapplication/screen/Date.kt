@@ -76,7 +76,7 @@ class DateUtils {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Date(
-    modifier: Modifier = Modifier
+//    modifier: Modifier = Modifier
 ): String {
     val dateState = rememberDatePickerState()
     val millisToLocalDate = dateState.selectedDateMillis?.let {
@@ -134,8 +134,8 @@ fun Date(
     return dateToString
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Test() {
-    Date()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SelectScreen() {
+//    Date()
+//}

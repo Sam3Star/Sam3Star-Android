@@ -1,4 +1,4 @@
-package com.nohjason.myapplication.screen
+package com.nohjason.myapplication.screen.add
 
 import android.util.Log
 import android.widget.Toast
@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.nohjason.myapplication.network.MainViewModel
-import com.nohjason.myapplication.network.Task
+import com.nohjason.myapplication.network.Routine
 import kotlin.collections.listOf
 
 @Composable
@@ -113,15 +113,16 @@ fun RoutineAddScreen(
                 .background(Color(0xFF9C89B8))
                 .clickable {
                     if (text.isNotEmpty() && importance.isNotEmpty()  && selectedBoxIndex != -1) {
-                        val task = Task(
+                        val routine = Routine(
                             name = text,
                             importanceEnum = importance,
                             colorEnum = colorList[selectedBoxIndex]
 //                            startAt = startDate,
 //                            endAt = endDate
                         )
-                        Log.d("TAG", "AddScreen: $task")
-                        viewModel.createTask(task)
+                        Log.d("TAG", "AddScreen: $routine")
+                        viewModel.createRoutine(routine)
+                        navController.popBackStack()
                         navController.popBackStack()
                     } else {
                         Toast.makeText(context, "모든 항목을 채워 주세요", Toast.LENGTH_SHORT).show()

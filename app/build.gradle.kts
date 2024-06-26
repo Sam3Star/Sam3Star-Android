@@ -50,6 +50,11 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.google.accompanist:accompanist-pager:0.23.1")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.23.1")
+    implementation ("io.github.boguszpawlowski.composecalendar:composecalendar:0.1.0")
+
     implementation ("androidx.compose.material:material:1.6.8")
     // Needed to get a view model reference in Jetpack Compose
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
